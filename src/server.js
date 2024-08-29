@@ -28,7 +28,9 @@ app.get('/', (req, res) => {
 app.post('/webhook', (req, res) => {
     const payload = req.body;
     const { appId, orderNo, crypto, network, address, status, txHash } = payload;
+    console.log('Webhook received:', payload);
 
+    /*
     if (verifySignature(payload)) {
         if (status === 'PAY_SUCCESS') {
             console.log(`Payment success for order ${orderNo}.`);
@@ -38,11 +40,25 @@ app.post('/webhook', (req, res) => {
         res.status(400).send('Invalid signature');
     }
 
+     */
+
+    // Simulate the burning of DIMO tokens if the payment was successful
+    if (status === 'PAY_SUCCESS') {
+        console.log(`Payment success for transaction ${txHash}.`);
+        console.log('Simulating DIMO token burn...');
+    } else {
+        console.log(`Received status ${status} for transaction ${txHash}.`);
+    }
+
+
     res.status(200).send('Webhook received');
 });
 
+/*
 function verifySignature(payload) {
     const { appId, orderNo, crypto, network, address, newSignature } = payload;
+    const appSecret = "app_secret";
+
     const signatureString = appId + orderNo + crypto + network + address;
     const calculatedSignature = crypto
         .createHmac('sha256', appSecret)
@@ -51,6 +67,8 @@ function verifySignature(payload) {
 
     return calculatedSignature === newSignature;
 }
+ */
+
 
 // Checks tx status on chain
 async function burnDimo(txHash) {
